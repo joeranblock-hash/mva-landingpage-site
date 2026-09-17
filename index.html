@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qualified MVA Leads — Pay Per Lead</title>
+<style>
+  :root {
+    --brand-dark: #0C352F;
+    --brand: #114B43;
+    --brand-light: #3C5956;
+    --accent: #FCC52D;
+    --accent-dark: #E0AC10;
+    --bg-light: #EDF6F5;
+    --text-dark: #12211E;
+    --text-light: #F3F7F6;
+    --muted: #7E938F;
+    --border: #D7E4E2;
+    --danger: #D64545;
+  }
+
+  /* Alles unter .mva-lp scopen -- falls diese Seite spaeter per Custom-HTML-Block
+     in einen Page-Builder eingebettet wird, sollen body/*-Regeln nicht auf die
+     restliche Seite durchschlagen (siehe Learnings vom Rentenluecken-Rechner). */
+  .mva-lp, .mva-lp * { box-sizing: border-box; margin: 0; padding: 0; }
+  .mva-lp {
+    display: block;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text-dark);
+    line-height: 1.5;
+    background: var(--bg-light);
+  }
+  .mva-lp a { color: inherit; text-decoration: none; }
+  .mva-lp ul { list-style: none; }
+  .mva-lp img { max-width: 100%; display: block; }
+  .mva-lp .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  .mva-lp .eyebrow {
+    display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; padding: 6px 14px; border-radius: 999px;
+  }
+  .mva-lp .btn {
+    display: inline-block; font-weight: 700; font-size: 15px; padding: 14px 28px;
+    border-radius: 8px; cursor: pointer; border: none; transition: transform 0.15s ease, filter 0.15s ease;
+  }
+  .mva-lp .btn:hover { filter: brightness(1.06); }
+  .mva-lp .btn-accent { background: var(--accent); color: var(--brand-dark); }
+  .mva-lp .btn-outline { background: transparent; color: var(--text-light); border: 1.5px solid rgba(255,255,255,0.4); }
+  .mva-lp .btn-dark { background: var(--brand-dark); color: var(--text-light); }
+  .mva-lp .section { padding: 72px 0; }
+  .mva-lp .section-dark { background: linear-gradient(160deg, var(--brand-dark) 0%, var(--brand) 100%); color: var(--text-light); }
+  .mva-lp .kicker { color: var(--accent); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; font-size: 13px; margin-bottom: 12px; }
+  .mva-lp h1, .mva-lp h2, .mva-lp h3 { font-weight: 800; line-height: 1.15; }
+  .mva-lp .section-title { font-size: 34px; margin-bottom: 16px; }
+  .mva-lp .section-sub { color: var(--muted); font-size: 16px; max-width: 620px; }
+  .mva-lp .section-dark .section-sub { color: rgba(243,247,246,0.75); }
+
+  /* ---------- Nav ---------- */
+  .mva-lp .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--brand-dark); border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .mva-lp .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; max-width: 1120px; margin: 0 auto; }
+  .mva-lp .brand { font-size: 19px; font-weight: 800; color: var(--text-light); letter-spacing: 0.02em; }
+  .mva-lp .brand span { color: var(--accent); }
+  .mva-lp .nav-links { display: flex; gap: 32px; align-items: center; }
+  .mva-lp .nav-links a { color: rgba(243,247,246,0.85); font-size: 14px; font-weight: 600; }
+  .mva-lp .nav-links a:hover { color: var(--text-light); }
+  .mva-lp .nav-cta { padding: 10px 20px; font-size: 14px; }
+  .mva-lp .nav-toggle { display: none; }
+
+  /* ---------- Hero ---------- */
+  .mva-lp .hero { padding: 88px 0 64px; }
+  .mva-lp .hero h1 { font-size: 52px; color: var(--text-light); margin: 18px 0 20px; }
+  .mva-lp .hero h1 em { font-style: normal; color: var(--accent); }
+  .mva-lp .hero p { font-size: 17px; color: rgba(243,247,246,0.8); max-width: 520px; margin-bottom: 28px; }
+  .mva-lp .hero-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .mva-lp .hero-actions .note { font-size: 12.5px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(243,247,246,0.55); font-weight: 700; }
+
+  /* ---------- Intro 3-cards ---------- */
+  .mva-lp .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; }
+  .mva-lp .num-card {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px; padding: 26px;
+  }
+  .mva-lp .num-card .num { font-size: 13px; font-weight: 800; color: var(--accent); margin-bottom: 12px; }
+  .mva-lp .num-card h3 { font-size: 17px; color: var(--text-light); margin-bottom: 8px; }
+  .mva-lp .num-card p { font-size: 14px; color: rgba(243,247,246,0.7); }
+
+  /* ---------- Process (light) ---------- */
+  .mva-lp .process-list { margin-top: 36px; display: grid; gap: 14px; }
+  .mva-lp .process-row {
+    display: flex; align-items: flex-start; gap: 16px; background: white;
+    border: 1px solid var(--border); border-radius: 12px; padding: 18px 22px;
+  }
+  .mva-lp .process-row .bubble {
+    flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; background: var(--brand);
+    color: var(--text-light); font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center;
+  }
+  .mva-lp .process-row p { color: var(--text-dark); font-size: 15px; }
+
+  /* ---------- Funnel stats (dark) ---------- */
+  .mva-lp .funnel-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin: 40px 0 32px; }
+  .mva-lp .funnel-step { text-align: center; }
+  .mva-lp .funnel-step .val { font-size: 40px; font-weight: 800; color: var(--accent); }
+  .mva-lp .funnel-step .lab { font-size: 12.5px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(243,247,246,0.7); margin-top: 4px; }
+  .mva-lp .funnel-bar-track { height: 10px; border-radius: 5px; background: rgba(255,255,255,0.12); overflow: hidden; margin-top: 40px; display: flex; }
+  .mva-lp .funnel-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent) 0%, #fff5d6 100%); border-radius: 5px 0 0 5px; transition: width 1s ease; }
+  .mva-lp .reject-reasons { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 18px; font-size: 13px; color: rgba(243,247,246,0.65); }
+  .mva-lp .reject-reasons strong { color: var(--accent); }
+  .mva-lp .funnel-callout { margin-top: 40px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 24px 26px; font-size: 15px; color: rgba(243,247,246,0.85); }
+
+  /* ---------- Pain points ---------- */
+  .mva-lp .pain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 36px; }
+  .mva-lp .pain-card { background: white; border: 1px solid var(--border); border-radius: 14px; padding: 26px; }
+  .mva-lp .pain-card .num { font-size: 13px; font-weight: 800; color: var(--brand); margin-bottom: 10px; }
+  .mva-lp .pain-card h3 { font-size: 16.5px; margin-bottom: 8px; }
+  .mva-lp .pain-card p { font-size: 14px; color: var(--muted); }
+
+  /* ---------- Pillars ---------- */
+  .mva-lp .pillar { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; padding: 44px 0; border-bottom: 1px solid var(--border); }
+  .mva-lp .pillar:last-child { border-bottom: none; }
+  .mva-lp .pillar-tag { display: inline-block; font-size: 12px; font-weight: 800; color: var(--brand); background: rgba(17,75,67,0.08); padding: 5px 12px; border-radius: 999px; margin-bottom: 14px; }
+  .mva-lp .pillar h3 { font-size: 24px; margin-bottom: 10px; }
+  .mva-lp .pillar > div:first-child p { color: var(--muted); font-size: 15px; margin-bottom: 16px; }
+  .mva-lp .pillar-list li { font-size: 14.5px; margin-bottom: 10px; padding-left: 22px; position: relative; }
+  .mva-lp .pillar-list li::before { content: "✓"; position: absolute; left: 0; color: var(--brand); font-weight: 800; }
+  .mva-lp .pillar-panel { background: var(--brand-dark); border-radius: 16px; padding: 30px; color: var(--text-light); }
+  .mva-lp .pillar-panel .cap { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 700; margin-bottom: 14px; }
+  .mva-lp .pillar-panel .step { display: flex; gap: 12px; margin-bottom: 14px; font-size: 14px; color: rgba(243,247,246,0.85); }
+  .mva-lp .pillar-panel .step b { color: var(--accent); }
+
+  /* ---------- 6-step timeline ---------- */
+  .mva-lp .timeline { margin-top: 40px; display: grid; gap: 16px; }
+  .mva-lp .tl-row { display: grid; grid-template-columns: 56px 1fr; gap: 18px; }
+  .mva-lp .tl-row .dot { width: 40px; height: 40px; border-radius: 50%; background: var(--bg-light); border: 2px solid var(--brand); color: var(--brand); font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .mva-lp .tl-row h4 { font-size: 16px; margin-bottom: 4px; }
+  .mva-lp .tl-row p { font-size: 14px; color: var(--muted); }
+
+  /* ---------- CTA banner ---------- */
+  .mva-lp .cta-banner { text-align: center; padding: 60px 24px; }
+  .mva-lp .cta-banner h2 { font-size: 30px; margin-bottom: 14px; color: var(--text-light); }
+  .mva-lp .cta-banner p { color: rgba(243,247,246,0.75); margin-bottom: 26px; }
+  .mva-lp .cta-banner .fine { margin-top: 14px; font-size: 12.5px; color: rgba(243,247,246,0.55); }
+
+  /* ---------- FAQ ---------- */
+  .mva-lp .faq-item { border-bottom: 1px solid var(--border); }
+  .mva-lp .faq-q {
+    width: 100%; text-align: left; background: none; border: none; cursor: pointer;
+    padding: 18px 4px; font-size: 15.5px; font-weight: 700; color: var(--text-dark);
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  }
+  .mva-lp .faq-q .chev { transition: transform 0.2s ease; color: var(--brand); font-size: 18px; flex-shrink: 0; }
+  .mva-lp .faq-item.open .faq-q .chev { transform: rotate(45deg); }
+  .mva-lp .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; font-size: 14.5px; color: var(--muted); }
+  .mva-lp .faq-item.open .faq-a { max-height: 240px; }
+  .mva-lp .faq-a-inner { padding: 0 4px 18px; }
+
+  /* ---------- Form ---------- */
+  .mva-lp .quote-wrap { display: grid; grid-template-columns: 1fr 1.15fr; gap: 48px; align-items: flex-start; }
+  .mva-lp .quote-wrap h2 { color: var(--text-light); font-size: 32px; margin-bottom: 14px; }
+  .mva-lp .quote-wrap > div:first-child p { color: rgba(243,247,246,0.75); font-size: 15px; margin-bottom: 20px; }
+  .mva-lp .contact-line { font-size: 14px; color: var(--accent); font-weight: 700; }
+  .mva-lp .quote-form { background: white; border-radius: 16px; padding: 30px; color: var(--text-dark); }
+  .mva-lp .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .mva-lp .form-row.single { grid-template-columns: 1fr; }
+  .mva-lp label.field-label { display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 6px; color: var(--text-dark); text-transform: uppercase; letter-spacing: 0.04em; }
+  .mva-lp input[type="text"], .mva-lp input[type="email"], .mva-lp input[type="tel"], .mva-lp select, .mva-lp textarea {
+    width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+    font-size: 14.5px; font-family: inherit; color: var(--text-dark); background: var(--bg-light);
+  }
+  .mva-lp textarea { resize: vertical; min-height: 80px; }
+  .mva-lp input:focus, .mva-lp select:focus, .mva-lp textarea:focus { outline: none; border-color: var(--brand); background: white; }
+  .mva-lp .quote-form .btn { width: 100%; margin-top: 8px; }
+  .mva-lp .quote-form .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .mva-lp .error-msg { color: var(--danger); font-size: 13px; margin-top: 10px; display: none; }
+  .mva-lp .success-box { display: none; text-align: center; padding: 30px 10px; }
+  .mva-lp .success-box.visible { display: block; }
+  .mva-lp .success-box h3 { font-size: 19px; margin-bottom: 8px; color: var(--brand); }
+  .mva-lp .success-box p { font-size: 14px; color: var(--muted); }
+
+  /* ---------- Footer ---------- */
+  .mva-lp .footer { background: var(--brand-dark); color: rgba(243,247,246,0.6); padding: 30px 0; font-size: 13px; }
+  .mva-lp .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .mva-lp .footer a { color: rgba(243,247,246,0.6); }
+  .mva-lp .footer a:hover { color: var(--text-light); }
+
+  @media (max-width: 860px) {
+    .mva-lp .nav-links { display: none; }
+    .mva-lp .hero h1 { font-size: 36px; }
+    .mva-lp .grid-3, .mva-lp .pain-grid, .mva-lp .funnel-grid { grid-template-columns: 1fr; }
+    .mva-lp .pillar { grid-template-columns: 1fr; }
+    .mva-lp .quote-wrap { grid-template-columns: 1fr; }
+    .mva-lp .form-row { grid-template-columns: 1fr; }
+    .mva-lp .section { padding: 52px 0; }
+    .mva-lp .section-title { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="mva-lp">
+
+  <!-- ================== NAV ================== -->
+  <!-- TODO: Markenname eintragen (Platzhalter: "CLAIMLINE") -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">CLAIM<span>LINE</span></div>
+      <div class="nav-links">
+        <a href="#how-it-works">How It Works</a>
+        <a href="#lead-quality">Lead Quality</a>
+        <a href="#faq">FAQ</a>
+        <a href="#get-quote" class="btn btn-accent nav-cta">Get Leads</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ================== HERO ================== -->
+  <header class="section-dark hero">
+    <div class="container">
+      <span class="eyebrow" style="background:rgba(255,255,255,0.1); color:var(--text-light);">Now Booking New Intake Partners</span>
+      <h1>Connecting Motor Vehicle Accident Cases with <em>Leading Law Firms.</em></h1>
+      <p>A pay-per-lead partnership built around your intake, not our ad spend. We fund and run the campaigns — you only pay when a claimant actually matches your criteria. Cancel whenever you want.</p>
+      <div class="hero-actions">
+        <a href="#get-quote" class="btn btn-accent">Get Leads</a>
+        <a href="#how-it-works" class="btn btn-outline">See How It Works</a>
+      </div>
+
+      <div class="grid-3">
+        <div class="num-card">
+          <div class="num">01</div>
+          <h3>Claimants Matched To Your Criteria</h3>
+          <p>Every case that reaches you has already been checked against the filters you set — injury type, state, timeline.</p>
+        </div>
+        <div class="num-card">
+          <div class="num">02</div>
+          <h3>Ad Spend Is On Us</h3>
+          <p>We fund and run the campaigns ourselves. You're billed only for claimants who actually clear your bar.</p>
+        </div>
+        <div class="num-card">
+          <div class="num">03</div>
+          <h3>Live Within A Day</h3>
+          <p>Tell us what a good case looks like for your firm, and intake can start the same week.</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================== PROCESS ================== -->
+  <section class="section" id="how-it-works">
+    <div class="container">
+      <div class="kicker" style="color:var(--brand);">Process</div>
+      <h2 class="section-title">Your caseload, funded by our ad budget.</h2>
+      <p class="section-sub">From the first ad impression to the signed retainer, the acquisition cost sits with us — not your firm.</p>
+
+      <div class="process-list">
+        <div class="process-row"><div class="bubble">1</div><p>We run and fund the ad campaigns ourselves, using our own landing pages and tracking.</p></div>
+        <div class="process-row"><div class="bubble">2</div><p>Nothing reaches your intake team until it's been checked against the exact criteria you gave us.</p></div>
+        <div class="process-row"><div class="bubble">3</div><p>What clears that check lands directly in your CRM, ready for a first call.</p></div>
+        <div class="process-row"><div class="bubble">4</div><p>A duplicate or mismatched case gets swapped out at no cost — that risk sits with us, not your budget.</p></div>
+        <div class="process-row"><div class="bubble">5</div><p>Every stage is logged, so you can see exactly what happened to a case before it ever reached you.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== LEAD QUALITY / FUNNEL ================== -->
+  <section class="section section-dark" id="lead-quality">
+    <div class="container">
+      <div class="kicker">Quality Control</div>
+      <h2 class="section-title" style="color:var(--text-light);">Most of what we generate never makes it to your desk.</h2>
+      <p class="section-sub">That's by design. Every case gets filtered hard before it's allowed near your intake team — what doesn't survive that filter is spend we absorb, not leads you pay for.</p>
+
+      <div class="funnel-grid">
+        <div class="funnel-step"><div class="val">100</div><div class="lab">Generated</div></div>
+        <div class="funnel-step"><div class="val">55</div><div class="lab">Screened</div></div>
+        <div class="funnel-step"><div class="val">24</div><div class="lab">Verified</div></div>
+        <div class="funnel-step"><div class="val">8</div><div class="lab">Delivered</div></div>
+      </div>
+      <div class="funnel-bar-track">
+        <div class="funnel-bar-fill" style="width:100%"></div>
+      </div>
+      <div class="reject-reasons">
+        <span><strong>−45</strong> no injury, statute expired, or clearly not at fault</span>
+        <span><strong>−31</strong> already has counsel or never sought treatment</span>
+        <span><strong>−16</strong> outside your state or case-value filters</span>
+      </div>
+
+      <div class="funnel-callout">
+        <strong style="color:var(--accent);">The rejects are our cost, not yours.</strong> Every submission is checked against accident date,
+        injury, fault and treatment right at the form. What passes gets a second, human verification call against
+        your specific criteria before it's ever sent your way.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== PAIN POINTS ================== -->
+  <section class="section">
+    <div class="container">
+      <div class="kicker" style="color:var(--brand);">Sound Familiar?</div>
+      <h2 class="section-title">Experiencing any of these challenges?</h2>
+
+      <div class="pain-grid">
+        <div class="pain-card">
+          <div class="num">01</div>
+          <h3>Paying agencies for reach, not results</h3>
+          <p>A big ad budget doesn't automatically turn into signed retainers — chasing broad awareness burns time and money either way.</p>
+        </div>
+        <div class="pain-card">
+          <div class="num">02</div>
+          <h3>Claimants who won't pick up</h3>
+          <p>By the time your team calls, they've already heard from three other firms and stopped answering unknown numbers.</p>
+        </div>
+        <div class="pain-card">
+          <div class="num">03</div>
+          <h3>Growth capped by referrals</h3>
+          <p>Waiting on word-of-mouth means your intake volume depends on other people's timelines, not yours.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== PILLARS ================== -->
+  <section class="section" style="background:white;">
+    <div class="container">
+      <div class="kicker" style="color:var(--brand);">What Makes Us Different</div>
+      <h2 class="section-title">Three ways to grow your caseload.</h2>
+
+      <div class="pillar">
+        <div>
+          <span class="pillar-tag">Lead Delivery</span>
+          <h3>Pre-Qualified Claimants, Delivered On Your Terms</h3>
+          <p>Tell us once what a case worth taking looks like for your firm — injury severity, state, timeline — and matching claimants start arriving in your CRM or by warm transfer, usually within a day.</p>
+          <ul class="pillar-list">
+            <li>You're billed for delivered cases, not ad spend</li>
+            <li>Criteria set by injury type, state and case value</li>
+            <li>Each claimant has already confirmed they're looking to hire</li>
+          </ul>
+          <a href="#get-quote" class="btn btn-dark">Get Pre-Qualified Leads</a>
+        </div>
+        <div class="pillar-panel">
+          <div class="cap">How Delivery Works</div>
+          <div class="step"><b>→</b> You define what a qualified case looks like</div>
+          <div class="step"><b>→</b> Matching claimants start arriving inside a day</div>
+          <div class="step"><b>→</b> Pause or stop anytime, no contract</div>
+        </div>
+      </div>
+
+      <div class="pillar">
+        <div class="pillar-panel" style="order:2;">
+          <div class="cap">What's Included</div>
+          <div class="step"><b>→</b> Presence built for both you and your firm</div>
+          <div class="step"><b>→</b> A qualification flow tailored to your intake</div>
+          <div class="step"><b>→</b> A funnel built around the retainer, not just the click</div>
+        </div>
+        <div style="order:1;">
+          <span class="pillar-tag">Firm Presence</span>
+          <h3>Be The Firm They Find After The Crash</h3>
+          <p>We build the online presence that makes your firm the obvious, credible choice the moment someone starts searching for a lawyer.</p>
+          <ul class="pillar-list">
+            <li>Fully built and maintained for you</li>
+            <li>Includes its own intake-qualification flow</li>
+            <li>A funnel designed around getting the retainer signed</li>
+          </ul>
+          <a href="#get-quote" class="btn btn-dark">Get Pre-Qualified Leads</a>
+        </div>
+      </div>
+
+      <div class="pillar">
+        <div>
+          <span class="pillar-tag">Follow-Up System</span>
+          <h3>Turn More Conversations Into Signed Cases</h3>
+          <p>Automated follow-up and pipeline management so fewer of the cases you already paid for go cold.</p>
+          <ul class="pillar-list">
+            <li>Follow-up sequences that keep working after a missed call</li>
+            <li>Appointment scheduling handled automatically</li>
+            <li>Built to lift both contact rate and sign rate</li>
+          </ul>
+          <a href="#get-quote" class="btn btn-dark">Get Pre-Qualified Leads</a>
+        </div>
+        <div class="pillar-panel">
+          <div class="cap">What It Solves</div>
+          <div class="step"><b>→</b> Fewer claimants slip through after the first call</div>
+          <div class="step"><b>→</b> Appointments get booked without manual chasing</div>
+          <div class="step"><b>→</b> Works alongside the lead-delivery service above</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== TIMELINE ================== -->
+  <section class="section" style="background:var(--bg-light);">
+    <div class="container">
+      <div class="kicker" style="color:var(--brand);">How It Works</div>
+      <h2 class="section-title">From first click to signed retainer.</h2>
+      <p class="section-sub">Here's the path every claimant takes before your intake team ever hears about them.</p>
+
+      <div class="timeline">
+        <div class="tl-row"><div class="dot">1</div><div><h4>The ad spend is ours</h4><p>We run the campaigns and own the landing pages directly — no aggregator reselling the same claimant to five firms.</p></div></div>
+        <div class="tl-row"><div class="dot">2</div><div><h4>Most drop out at the form</h4><p>Accident date, injury, fault, treatment status and existing representation are checked before anyone picks up a phone.</p></div></div>
+        <div class="tl-row"><div class="dot">3</div><div><h4>Contacted within minutes</h4><p>A live agent calls while the claimant is still weighing their options, not a day later.</p></div></div>
+        <div class="tl-row"><div class="dot">4</div><div><h4>The file is assembled first</h4><p>Facts, injuries, treatment and insurance details are confirmed and checked against your specific criteria.</p></div></div>
+        <div class="tl-row"><div class="dot">5</div><div><h4>It reaches you ready to sign</h4><p>You get a warm transfer with the summary already in hand, or the full case file posted straight into your CRM.</p></div></div>
+        <div class="tl-row"><div class="dot">6</div><div><h4>Your outcomes shape the next batch</h4><p>We track which cases you actually sign and tighten the qualification criteria accordingly — quality should keep improving over time.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== CTA BANNER ================== -->
+  <section class="section-dark cta-banner">
+    <div class="container">
+      <div class="kicker">Pay Only For Qualified Leads</div>
+      <h2>Start or stop whenever it suits your intake.</h2>
+      <p>Set your own volume, states and case criteria — delivery happens on your schedule, not ours.</p>
+      <a href="#get-quote" class="btn btn-accent">Get More Cases</a>
+      <div class="fine">No setup fees · No long-term commitment</div>
+    </div>
+  </section>
+
+  <!-- ================== FAQ ================== -->
+  <section class="section" id="faq" style="background:white;">
+    <div class="container" style="max-width:760px;">
+      <div class="kicker" style="color:var(--brand);">FAQ</div>
+      <h2 class="section-title">Questions firms ask us.</h2>
+
+      <div class="faq-list" style="margin-top:24px;">
+        <div class="faq-item">
+          <button class="faq-q">Are leads exclusive? <span class="chev">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Exclusivity is configurable per state and case type — talk to us about what fits your intake capacity.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">What if a lead doesn't meet my criteria? <span class="chev">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Any lead outside your specified targeting gets replaced or refunded — you only pay for what fits.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Can I buy a single state or case type? <span class="chev">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Yes — volume and geography are fully configurable to your firm's intake criteria.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">How fast can we start? <span class="chev">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Most firms start receiving qualified leads within days of setting their criteria.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">How do you handle TCPA compliance? <span class="chev">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Consent is captured and logged at the point of the original form fill, and the trail is available on request.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">How easy is it to integrate into my CRM? <span class="chev">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Leads post directly to your CRM via webhook/API, or arrive via warm phone transfer — your choice.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== GET QUOTE FORM ================== -->
+  <section class="section section-dark" id="get-quote">
+    <div class="container">
+      <div class="quote-wrap">
+        <div>
+          <div class="kicker">Get Quote</div>
+          <h2>Tell us what you're looking for.</h2>
+          <p>Send over your target states and case types — we'll come back with real availability, pricing and timelines.</p>
+          <div class="contact-line">TODO: eigene Kontakt-E-Mail eintragen</div>
+        </div>
+
+        <form class="quote-form" id="quoteForm" autocomplete="on">
+          <div class="form-row">
+            <div>
+              <label class="field-label" for="qName">Your Name</label>
+              <input type="text" id="qName" name="qName" required>
+            </div>
+            <div>
+              <label class="field-label" for="qFirm">Firm</label>
+              <input type="text" id="qFirm" name="qFirm" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label class="field-label" for="qEmail">Work Email</label>
+              <input type="email" id="qEmail" name="qEmail" required>
+            </div>
+            <div>
+              <label class="field-label" for="qPhone">Phone</label>
+              <input type="tel" id="qPhone" name="qPhone" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label class="field-label" for="qState">Primary State</label>
+              <select id="qState" name="qState" required>
+                <option value="">Select a state</option>
+                <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option>
+                <option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option>
+                <option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option>
+                <option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option>
+                <option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option>
+                <option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option>
+                <option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option>
+                <option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option>
+                <option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option>
+                <option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option>
+                <option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option>
+                <option>Vermont</option><option>Virginia</option><option>Washington</option><option>Washington DC</option>
+                <option>West Virginia</option><option>Wisconsin</option><option>Wyoming</option>
+              </select>
+            </div>
+            <div>
+              <label class="field-label" for="qVolume">Monthly Volume</label>
+              <select id="qVolume" name="qVolume" required>
+                <option value="">Select a range</option>
+                <option>Under 25 leads / month</option>
+                <option>25–75 leads / month</option>
+                <option>75–200 leads / month</option>
+                <option>200+ leads / month</option>
+                <option>Not sure yet</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row single">
+            <div>
+              <label class="field-label" for="qCriteria">Case Types &amp; Criteria</label>
+              <textarea id="qCriteria" name="qCriteria" placeholder="e.g. rear-end collisions, soft tissue + surgical, no PIP limit..."></textarea>
+            </div>
+          </div>
+          <div class="form-row single">
+            <div>
+              <label class="field-label" for="qWebsite">Firm Website</label>
+              <input type="text" id="qWebsite" name="qWebsite">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-accent" id="quoteSubmitBtn">Get Leads</button>
+          <div class="error-msg" id="quoteError">Please fill out all required fields.</div>
+
+          <div class="success-box" id="quoteSuccess">
+            <h3>Thanks — request received.</h3>
+            <p>We'll follow up with real numbers for your state and case types shortly.</p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== FOOTER ================== -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>© 2026 Claimline. No contracts — cancel anytime.</div>
+      <div><a href="#">Privacy</a> · <a href="#">Terms</a></div>
+    </div>
+  </footer>
+
+</div>
+
+<!-- ================== META PIXEL ================== -->
+<!-- TODO: eigene Pixel-ID eintragen -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', 'DEINE_PIXEL_ID_HIER');
+fbq('track', 'PageView');
+</script>
+<!-- ================================================= -->
+
+<script>
+(function () {
+  // ---------- FAQ Accordion ----------
+  document.querySelectorAll('.faq-item').forEach(function (item) {
+    item.querySelector('.faq-q').addEventListener('click', function () {
+      var wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(function (openItem) {
+        if (openItem !== item) openItem.classList.remove('open');
+      });
+      item.classList.toggle('open', !wasOpen);
+    });
+  });
+
+  // ---------- Funnel bar fill-in on scroll ----------
+  var bar = document.querySelector('.funnel-bar-fill');
+  if (bar) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          bar.style.width = '8%';
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.4 });
+    bar.style.width = '100%';
+    observer.observe(bar);
+  }
+
+  // ---------- Get-Quote Form ----------
+  var form = document.getElementById('quoteForm');
+  var submitBtn = document.getElementById('quoteSubmitBtn');
+  var errorMsg = document.getElementById('quoteError');
+  var successBox = document.getElementById('quoteSuccess');
+
+  // WICHTIG: Nach dem Anlegen des Zaps hier die "Catch Hook"-URL aus Zapier eintragen
+  var ZAPIER_WEBHOOK_URL = 'https://hooks.zapier.com/hooks/catch/DEINE_HOOK_ID_HIER/';
+
+  function getParam(name) {
+    var params = new URLSearchParams(window.location.search);
+    return params.get(name) || '';
+  }
+  function getCookie(name) {
+    var match = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return match ? match.pop() : '';
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    errorMsg.style.display = 'none';
+
+    if (!form.checkValidity()) {
+      errorMsg.style.display = 'block';
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    var payload = {
+      name: document.getElementById('qName').value.trim(),
+      firm: document.getElementById('qFirm').value.trim(),
+      email: document.getElementById('qEmail').value.trim(),
+      phone: document.getElementById('qPhone').value.trim(),
+      state: document.getElementById('qState').value,
+      monthly_volume: document.getElementById('qVolume').value,
+      case_criteria: document.getElementById('qCriteria').value.trim(),
+      website: document.getElementById('qWebsite').value.trim(),
+
+      utm_source: getParam('utm_source'),
+      utm_campaign: getParam('utm_campaign'),
+      utm_content: getParam('utm_content'),
+      utm_term: getParam('utm_term'),
+      fbclid: getParam('fbclid'),
+      fbp: getCookie('_fbp'),
+      fbc: getCookie('_fbc'),
+
+      submitted_at: new Date().toISOString(),
+      source: 'MVA-B2B-Landingpage',
+      page_url: window.location.href
+    };
+
+    fetch(ZAPIER_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then(function () {
+        if (typeof fbq !== 'undefined') {
+          fbq('track', 'Lead');
+        }
+        form.style.display = 'none';
+        successBox.classList.add('visible');
+      })
+      .catch(function (err) {
+        console.error('Übertragungsfehler:', err);
+        errorMsg.textContent = 'Something went wrong. Please try again in a moment.';
+        errorMsg.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Get Leads';
+      });
+  });
+})();
+</script>
+
+</body>
+</html>
