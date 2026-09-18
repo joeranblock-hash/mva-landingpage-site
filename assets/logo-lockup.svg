@@ -8,7 +8,7 @@
   </defs>
   <g transform="translate(4,4) scale(0.28)">
     <circle cx="100" cy="100" r="85" fill="url(#gGoldA)"/>
-    <path d="M72,60 L100,145 L128,60" stroke="#0C352F" stroke-width="22" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M72,145 L100,60 L128,145 M84,110 L116,110" stroke="#0C352F" stroke-width="22" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
-  <text x="72" y="40" font-family="-apple-system, Segoe UI, Arial, sans-serif" font-weight="800" font-size="28" letter-spacing="1" fill="#F3F7F6">VEYRA <tspan fill="#FCC52D">DEALS</tspan></text>
+  <text x="72" y="40" font-family="-apple-system, Segoe UI, Arial, sans-serif" font-weight="800" font-size="28" letter-spacing="1" fill="#F3F7F6">AMAYA <tspan fill="#FCC52D">DEALS</tspan></text>
 </svg>
