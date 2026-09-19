@@ -602,11 +602,15 @@ fbq('track', 'PageView');
       body: JSON.stringify(payload)
     })
       .then(function () {
-        if (typeof fbq !== 'undefined') {
-          fbq('track', 'Lead');
-        }
         form.style.display = 'none';
         successBox.classList.add('visible');
+        try {
+          if (typeof fbq !== 'undefined') {
+            fbq('track', 'Lead');
+          }
+        } catch (pixelErr) {
+          console.error('Pixel-Tracking-Fehler (ignoriert):', pixelErr);
+        }
       })
       .catch(function (err) {
         console.error('Übertragungsfehler:', err);
