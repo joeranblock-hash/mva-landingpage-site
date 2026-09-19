@@ -593,9 +593,12 @@ fbq('track', 'PageView');
       page_url: window.location.href
     };
 
+    // Bewusst ohne Content-Type-Header: application/json triggert einen CORS-
+    // Preflight (OPTIONS), den der Zapier-Webhook nicht beantwortet, wodurch
+    // der Browser den POST komplett blockt. Ohne Header bleibt es ein simple
+    // request (kein Preflight), und Zapier erkennt den JSON-Body trotzdem.
     fetch(ZAPIER_WEBHOOK_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     })
       .then(function () {
