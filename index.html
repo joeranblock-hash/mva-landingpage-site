@@ -412,7 +412,7 @@
         </div>
 
         <div class="quote-form">
-        <form id="quoteForm" autocomplete="on">
+        <form id="quoteForm" autocomplete="on" onsubmit="return false">
           <div class="form-row">
             <div>
               <label class="field-label" for="qName">Your Name</label>
@@ -516,30 +516,44 @@ fbq('track', 'PageView');
 
 <script>
 (function () {
+  // Jeder Abschnitt läuft in seinem eigenen try/catch: ein Fehler im
+  // FAQ-Akkordeon oder Funnel-Balken darf niemals verhindern, dass der
+  // Lead-Formular-Handler weiter unten registriert wird. Ohne das würde
+  // ein einziger Fehler oben das ganze Skript stoppen, und der Browser
+  // würde das Formular nativ absenden (Seiten-Reload statt AJAX).
+
   // ---------- FAQ Accordion ----------
-  document.querySelectorAll('.faq-item').forEach(function (item) {
-    item.querySelector('.faq-q').addEventListener('click', function () {
-      var wasOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item.open').forEach(function (openItem) {
-        if (openItem !== item) openItem.classList.remove('open');
+  try {
+    document.querySelectorAll('.faq-item').forEach(function (item) {
+      item.querySelector('.faq-q').addEventListener('click', function () {
+        var wasOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(function (openItem) {
+          if (openItem !== item) openItem.classList.remove('open');
+        });
+        item.classList.toggle('open', !wasOpen);
       });
-      item.classList.toggle('open', !wasOpen);
     });
-  });
+  } catch (faqErr) {
+    console.error('FAQ-Akkordeon-Fehler (ignoriert):', faqErr);
+  }
 
   // ---------- Funnel bar fill-in on scroll ----------
-  var bar = document.querySelector('.funnel-bar-fill');
-  if (bar) {
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          bar.style.width = '8%';
-          observer.disconnect();
-        }
-      });
-    }, { threshold: 0.4 });
-    bar.style.width = '100%';
-    observer.observe(bar);
+  try {
+    var bar = document.querySelector('.funnel-bar-fill');
+    if (bar) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            bar.style.width = '8%';
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.4 });
+      bar.style.width = '100%';
+      observer.observe(bar);
+    }
+  } catch (funnelErr) {
+    console.error('Funnel-Balken-Fehler (ignoriert):', funnelErr);
   }
 
   // ---------- Get-Quote Form ----------
