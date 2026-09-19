@@ -411,7 +411,8 @@
           <div class="contact-line">joeran.block@jb-equity.de</div>
         </div>
 
-        <form class="quote-form" id="quoteForm" autocomplete="on">
+        <div class="quote-form">
+        <form id="quoteForm" autocomplete="on">
           <div class="form-row">
             <div>
               <label class="field-label" for="qName">Your Name</label>
@@ -479,12 +480,13 @@
 
           <button type="submit" class="btn btn-accent" id="quoteSubmitBtn">Get Leads</button>
           <div class="error-msg" id="quoteError">Please fill out all required fields.</div>
-
-          <div class="success-box" id="quoteSuccess">
-            <h3>Thanks — request received.</h3>
-            <p>We'll follow up with real numbers for your state and case types shortly.</p>
-          </div>
         </form>
+
+        <div class="success-box" id="quoteSuccess">
+          <h3>Thanks — request received.</h3>
+          <p>We'll follow up with real numbers for your state and case types shortly.</p>
+        </div>
+        </div>
       </div>
     </div>
   </section>
